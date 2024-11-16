@@ -2,29 +2,15 @@ from sklearn import linear_model
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.pipeline import make_pipeline
 import pandas as pd
-
-def runRegressionModel(trainX, testX, trainY, testY):
-
-    regr = linear_model.LinearRegression()
-
-    # Train the model using the training sets
-    regr.fit(trainX, trainY)
-
-    # Make predictions using the testing set
-    wine_y_pred = regr.predict(testX)
-
-    # The coefficients
-    print("Coefficients: \n", regr.coef_)
-    # The mean squared error
-    print("MSE: %.2f" % mean_squared_error(testY, wine_y_pred))
-    # The coefficient of determination: 1 is perfect prediction
-    print("R^2: %.2f" % r2_score(testY, wine_y_pred))
-
-
-    return 0
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 df = pd.read_csv("student_sleep_patterns.csv", delimiter=",")
+df = df.dropna()
 scaler = StandardScaler()
 
 gender_mapping = {'Male': 1, 'Female': 2, 'Other': 3}
@@ -39,8 +25,20 @@ Y = "Sleep_Quality"
 sleep_X = df[coeffients]
 sleep_Y = df[Y]
 
-sleep_X = scaler.fit_transform(sleep_X)
-
 X_train, X_test, Y_train, Y_test = train_test_split(sleep_X, sleep_Y, test_size=0.2)
 
-runRegressionModel(X_train, X_test, Y_train, Y_test)
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+degree = 2
+poly_regression_model = make_pipeline(PolynomialFeatures(degree), LinearRegression())
+poly_regression_model.fit(X_train_scaled, Y_train)
+
+y_pred = poly_regression_model.predict(X_test_scaled)
+
+print("MSE: %.2f" % mean_squared_error(Y_test, y_pred))
+print("R^2: %.2f" % r2_score(Y_test, y_pred))
+
+sns.histplot(df['Sleep_Quality'], kde=True)
+plt.title("Distribution of Sleep Quality")
+plt.show()
