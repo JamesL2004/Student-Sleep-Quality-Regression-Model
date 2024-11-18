@@ -16,17 +16,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def TotalPercentOfStudying(sleepDuration, studyHours):
-
-    percOfStudy = 0
-
-    awakeHours = 24 - sleepDuration
-    percOfStudy = studyHours/awakeHours
-
-    return percOfStudy
-
-df = pd.read_csv("student_sleep_patterns.csv", delimiter=",")
-df = df.dropna()
 scaler = StandardScaler()
 
 df2 = pd.read_csv("Sleep_health_and_lifestyle_dataset.csv", delimiter=",")
@@ -35,21 +24,20 @@ print(df2.columns)
 gender = {'Male': 1, 'Female': 2}
 df2['gender_numeric'] = df2['Gender'].map(gender)
 occupation_mapping = {'Nurse': 1, 'Sales Representative': 2, 'Salesperson': 3, 'Scientist': 4, 'Software Engineer': 5, 'Teacher': 6, 'Accountant': 7, 'Doctor': 8, 'Engineer': 9, 'Lawyer': 10, 'Manager': 11}
+df2['occupation_numeric'] = df2['Occupation'].map(occupation_mapping)
 disorder_mapping = {'Insomnia': 1, 'None': 2, 'Sleep Apnea': 3}
-df2['disorder_numeric'] = df2["Occupation"].apply(occupation_mapping)
+df2['disorder_numeric'] = df2["Sleep Disorder"].map(disorder_mapping)
 bmi_mapping = {'Normal': 1, 'Normal Weight': 2, 'Obese': 3, 'Overweight': 4}
+df2['bmi_numeric'] = df2['BMI Category'].map(bmi_mapping)
 
-gender_mapping = {'Male': 1, 'Female': 2, 'Other': 3}
-df['Gender_numeric'] = df['Gender'].map(gender_mapping)
+df2[['systolic', 'diastolic']] = df2['Blood Pressure'].str.split('/', expand=True)
+df2['systolic'] = df2['systolic'].astype(int)
+df2['diastolic'] = df2['diastolic'].astype(int)
 
-year_mapping = {'1st Year': 1, '2nd Year': 2, '3rd Year': 3, '4th Year': 4}
-df['Year_numeric'] = df['University_Year'].map(year_mapping)
-
-df['Sleep_Quality_Category'] = pd.cut(df['Sleep_Quality'], bins=[0, 2, 4, 6, 8, 10], labels=['Poor', 'Fair', 'Good', 'Very Good', 'Excellent'])
-df['percOfStudy'] = df.apply(lambda row: TotalPercentOfStudying(row['Sleep_Duration'], row['Study_Hours']), axis=1)
-
-coeffients = ["Sleep Duration", "Heart Rate", "Daily Steps", "gender_numeric", "occupation_mapping"]
+coeffients = ["gender_numeric", "occupation_numeric", "disorder_numeric", "bmi_numeric", "Age", "Sleep Duration", "Physical Activity Level", "Stress Level", "Heart Rate", "Daily Steps", "systolic", "diastolic"]
 Y = "Quality of Sleep"
+
+df2 = df2.dropna()
 
 #df[coeffients] = (df[coeffients] - df[coeffients].mean()) / df[coeffients].std()
 
