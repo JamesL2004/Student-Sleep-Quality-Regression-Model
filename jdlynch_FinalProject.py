@@ -56,21 +56,21 @@ npYtest = np.array(Y_test)
 print("K-Nearest Neighbour " + " Test set score: {:.2f}".format(np.mean(otherClassifierTestPred == npYtest)))
 
 classifierRndForest = RandomForestClassifier(verbose=True)
-classifierRndForest.fit(X_train_scaled, Y_train)
-otherClassifierTestPred = classifierRndForest.predict(X_test_scaled)
+classifierRndForest.fit(X_train, Y_train)
+otherClassifierTestPred = classifierRndForest.predict(X_test)
 npYtest = np.array(Y_test)
 print("Random Forest " + " Test set score: {:.2f}".format(np.mean(otherClassifierTestPred == npYtest)))
 
 classifierNB = GaussianNB()
-classifierNB.fit(X_train_scaled, Y_train)
-otherClassifierTestPred = classifierNB.predict(X_test_scaled)
+classifierNB.fit(X_train, Y_train)
+otherClassifierTestPred = classifierNB.predict(X_test)
 npYtest = np.array(Y_test)
 print("Gaussian NB" + " Test set score: {:.2f}".format(np.mean(otherClassifierTestPred == npYtest)))
 
 clf = DecisionTreeClassifier(random_state=42)
 
-clf.fit(X_train_scaled, Y_train)
-Y_pred = clf.predict(X_test_scaled)
+clf.fit(X_train, Y_train)
+Y_pred = clf.predict(X_test)
 
 print("Accuracy:", accuracy_score(Y_test, Y_pred))
 print("\nClassification Report:\n", classification_report(Y_test, Y_pred))
