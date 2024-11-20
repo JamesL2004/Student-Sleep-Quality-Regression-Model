@@ -16,6 +16,26 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+def runRegressionModel(trainX, testX, trainY, testY):
+
+    regr = linear_model.LinearRegression()
+
+    # Train the model using the training sets
+    regr.fit(trainX, trainY)
+
+    # Make predictions using the testing set
+    wine_y_pred = regr.predict(testX)
+
+    # The coefficients
+    print("Coefficients: \n", regr.coef_)
+    # The mean squared error
+    print("MSE: %.2f" % mean_squared_error(testY, wine_y_pred))
+    # The coefficient of determination: 1 is perfect prediction
+    print("R^2: %.2f" % r2_score(testY, wine_y_pred))
+
+
+    return 0
+
 scaler = StandardScaler()
 
 df2 = pd.read_csv("Sleep_health_and_lifestyle_dataset.csv", delimiter=",")
@@ -76,12 +96,4 @@ print("Accuracy:", accuracy_score(Y_test, Y_pred))
 print("\nClassification Report:\n", classification_report(Y_test, Y_pred))
 print("\nConfusion Matrix:\n", confusion_matrix(Y_test, Y_pred))
 
-#degree = 2
-#poly_regression_model = make_pipeline(PolynomialFeatures(degree), LinearRegression())
-#poly_regression_model.fit(X_train_scaled, Y_train)
-
-#y_pred = poly_regression_model.predict(X_test_scaled)
-
-#print("MSE: %.2f" % mean_squared_error(Y_test, y_pred))
-#print("R^2: %.2f" % r2_score(Y_test, y_pred))
-
+runRegressionModel(X_train_scaled, X_test_scaled, Y_train, Y_test)
